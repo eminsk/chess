@@ -14,7 +14,7 @@ def quick_build():
     
     # Test with main.py only
     cmd = [
-        "uv", "run", "python", "-m", "nuitka",
+        "python", "-m", "nuitka",
         "--standalone",
         "--onefile", 
         "--enable-plugin=tk-inter",
@@ -25,7 +25,7 @@ def quick_build():
     ]
     
     if os.name == 'nt':  # Windows
-        cmd.extend(["--mingw64", "--windows-console-mode=disable"])
+        cmd.extend(["--msvc=latest", "--windows-console-mode=disable"])
     
     print(f"🔨 Running: {' '.join(cmd)}")
     
