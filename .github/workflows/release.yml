@@ -158,6 +158,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
     
     steps:
     - uses: actions/checkout@v4
@@ -165,16 +167,27 @@ jobs:
     - name: Download all artifacts
       uses: actions/download-artifact@v4
     
+    - name: List downloaded files
+      run: |
+        find . -name "*.zip" -type f
+        ls -la
+    
+    - name: Get version
+      id: get_version
+      run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+    
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref_name || github.event.inputs.version }}
-        release_name: Professional Chess Game ${{ github.ref_name || github.event.inputs.version }}
+        tag_name: ${{ steps.get_version.outputs.version }}
+        name: Professional Chess Game ${{ steps.get_version.outputs.version }}
         body: |
-          ## 🎯 Professional Chess Game Release ${{ github.ref_name || github.event.inputs.version }}
+          ## 🎯 Professional Chess Game Release ${{ steps.get_version.outputs.version }}
           
           ### 🎮 What's New
           - High-performance chess implementation with modern GUI
@@ -186,9 +199,9 @@ jobs:
           ### 📦 Downloads
           Choose your platform:
           
-          - **Windows**: Download `ChessGame-Windows-v*.zip`
-          - **Linux**: Download `ChessGame-linux-v*.zip` 
-          - **macOS**: Download `ChessGame-macos-v*.zip`
+          - **Windows**: Download `ChessGame-Windows-*.zip`
+          - **Linux**: Download `ChessGame-Linux-*.zip` 
+          - **macOS**: Download `ChessGame-macOS-*.zip`
           
           ### 🚀 Quick Start
           1. Download the appropriate package for your operating system
@@ -209,35 +222,9 @@ jobs:
           ---
           
           Enjoy this beautiful implementation of the classic game of Chess! ♔♕♖♗♘♙
+        files: |
+          **/*.zip
         draft: false
         prerelease: false
-    
-    - name: Upload Windows Release Asset
-      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./chess-game-windows/ChessGame-windows-v${{ github.ref_name || github.event.inputs.version }}.zip
-        asset_name: ChessGame-Windows-v${{ github.ref_name || github.event.inputs.version }}.zip
-        asset_content_type: application/zip
-    
-    - name: Upload Linux Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./chess-game-linux/ChessGame-linux-v${{ github.ref_name || github.event.inputs.version }}.zip
-        asset_name: ChessGame-Linux-v${{ github.ref_name || github.event.inputs.version }}.zip
-        asset_content_type: application/zip
-    
-    - name: Upload macOS Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./chess-game-macos/ChessGame-macos-v${{ github.ref_name || github.event.inputs.version }}.zip
-        asset_name: ChessGame-macOS-v${{ github.ref_name || github.event.inputs.version }}.zip
-        asset_content_type: application/zip
