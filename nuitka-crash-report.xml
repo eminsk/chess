@@ -10,16 +10,20 @@
     <optimization-time pass="2" time="0.00" />
     <module_usages />
   </module>
-  <module name="__main__" kind="PythonMainModule" usage="root_module" reason="Root module" source_path="${cwd}\main.py">
-    <optimization-time pass="1" time="0.24" micro_passes="5" max_branch_merge="34" merged_total="811" />
-    <optimization-time pass="2" time="0.04" micro_passes="1" max_branch_merge="34" merged_total="124" />
+  <module name="__main__" kind="PythonMainModule" usage="root_module" reason="Root module" source_path="${cwd}\chess_multiplayer.py">
+    <optimization-time pass="1" time="0.80" micro_passes="7" max_branch_merge="151" merged_total="13973" />
+    <optimization-time pass="2" time="0.08" micro_passes="1" max_branch_merge="150" merged_total="1854" />
     <module_usages>
+      <module_usage name="tkinter" finding="absolute" line="7" />
       <module_usage name="tkinter" finding="absolute" line="8" />
-      <module_usage name="tkinter" finding="absolute" line="9" />
-      <module_usage name="tkinter.messagebox" finding="relative" line="9" />
-      <module_usage name="subprocess" finding="absolute" line="10" />
-      <module_usage name="sys" finding="absolute" line="11" />
-      <module_usage name="os" finding="absolute" line="12" />
+      <module_usage name="tkinter.ttk" finding="relative" line="8" />
+      <module_usage name="tkinter.messagebox" finding="relative" line="8" />
+      <module_usage name="dataclasses" finding="absolute" line="9" />
+      <module_usage name="typing" finding="absolute" line="10" />
+      <module_usage name="enum" finding="absolute" line="11" />
+      <module_usage name="functools" finding="absolute" line="12" />
+      <module_usage name="itertools" finding="absolute" line="13" />
+      <module_usage name="copy" finding="absolute" line="14" />
       <module_usage name="_collections_abc" finding="absolute" line="1" />
       <module_usage name="_opcode_metadata" finding="absolute" line="1" />
       <module_usage name="_weakrefset" finding="absolute" line="1" />
@@ -1040,7 +1044,7 @@
       <module_usage name="_contextvars" finding="absolute" line="1" />
     </module_usages>
   </module>
-  <module name="copy" kind="UncompiledPythonModule" usage="stdlib" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.real_prefix}\Lib\copy.py">
+  <module name="copy" kind="UncompiledPythonModule" usage="import" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.real_prefix}\Lib\copy.py">
     <optimization-time pass="1" time="0.17" micro_passes="6" max_branch_merge="50" merged_total="2295" />
     <optimization-time pass="2" time="0.00" />
     <module_usages>
@@ -1068,7 +1072,7 @@
       <module_usage name="io" finding="absolute" line="75" />
     </module_usages>
   </module>
-  <module name="dataclasses" kind="UncompiledPythonModule" usage="stdlib" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.real_prefix}\Lib\dataclasses.py">
+  <module name="dataclasses" kind="UncompiledPythonModule" usage="import" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.real_prefix}\Lib\dataclasses.py">
     <optimization-time pass="1" time="0.53" micro_passes="6" max_branch_merge="162" merged_total="11433" />
     <optimization-time pass="2" time="0.00" />
     <module_usages>
@@ -2295,7 +2299,7 @@
       <module_usage name="zlib" finding="absolute" line="9" />
     </module_usages>
   </module>
-  <module name="enum" kind="UncompiledPythonModule" usage="stdlib" reason="Technically required for CPython library startup." source_path="${sys.real_prefix}\Lib\enum.py">
+  <module name="enum" kind="UncompiledPythonModule" usage="import" reason="Technically required for CPython library startup." source_path="${sys.real_prefix}\Lib\enum.py">
     <plugin-influence name="anti-bloat" influence="condition-used" condition="plugin(&quot;pyside6&quot;)" tags_used="plugin" result="false" />
     <optimization-time pass="1" time="1.45" micro_passes="7" max_branch_merge="189" merged_total="26721" />
     <optimization-time pass="2" time="0.00" />
@@ -2383,7 +2387,7 @@
       <module_usage name="re" finding="absolute" line="820" />
     </module_usages>
   </module>
-  <module name="functools" kind="UncompiledPythonModule" usage="stdlib" reason="Technically required for CPython library startup." source_path="${sys.real_prefix}\Lib\functools.py">
+  <module name="functools" kind="UncompiledPythonModule" usage="import" reason="Technically required for CPython library startup." source_path="${sys.real_prefix}\Lib\functools.py">
     <optimization-time pass="1" time="1.32" micro_passes="9" max_branch_merge="69" merged_total="14112" />
     <optimization-time pass="2" time="0.00" />
     <module_usages>
@@ -2649,7 +2653,7 @@
   </module>
   <module name="importlib.metadata" kind="UncompiledPythonPackage" usage="stdlib" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.real_prefix}\Lib\importlib\metadata\__init__.py">
     <optimization-time pass="1" time="1.71" micro_passes="7" max_branch_merge="78" merged_total="10659" />
-    <optimization-time pass="2" time="0.01" />
+    <optimization-time pass="2" time="0.00" />
     <module_usages>
       <module_usage name="os" finding="absolute" line="1" />
       <module_usage name="__future__" finding="absolute" line="1" />
@@ -3152,7 +3156,7 @@
       <module_usage name="_operator" finding="absolute" line="418" />
     </module_usages>
   </module>
-  <module name="os" kind="UncompiledPythonModule" usage="import" reason="Technically required for CPython library startup." source_path="${sys.real_prefix}\Lib\os.py">
+  <module name="os" kind="UncompiledPythonModule" usage="stdlib" reason="Technically required for CPython library startup." source_path="${sys.real_prefix}\Lib\os.py">
     <optimization-time pass="1" time="0.65" micro_passes="6" max_branch_merge="79" merged_total="8452" />
     <optimization-time pass="2" time="0.00" />
     <module_usages>
@@ -3974,6 +3978,18 @@
       <module_usage name="tkinter.commondialog" finding="absolute" line="25" />
     </module_usages>
   </module>
+  <module name="tkinter.ttk" kind="UncompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.real_prefix}\Lib\tkinter\ttk.py">
+    <optimization-time pass="1" time="1.26" micro_passes="8" max_branch_merge="70" merged_total="15991" />
+    <optimization-time pass="2" time="0.00" />
+    <module_usages>
+      <module_usage name="tkinter" finding="absolute" line="28" />
+      <module_usage name="tkinter" finding="absolute" line="29" />
+      <module_usage name="tkinter._flatten" finding="not-found" line="29" />
+      <module_usage name="tkinter._join" finding="not-found" line="29" />
+      <module_usage name="tkinter._stringify" finding="not-found" line="29" />
+      <module_usage name="tkinter._splitdict" finding="not-found" line="29" />
+    </module_usages>
+  </module>
   <module name="token" kind="UncompiledPythonModule" usage="stdlib" reason="Technically required for CPython library startup." source_path="${sys.real_prefix}\Lib\token.py">
     <optimization-time pass="1" time="0.03" micro_passes="5" max_branch_merge="10" merged_total="162" />
     <optimization-time pass="2" time="0.00" />
@@ -4105,7 +4121,7 @@
       <module_usage name="_socket" finding="absolute" line="336" />
     </module_usages>
   </module>
-  <module name="typing" kind="UncompiledPythonModule" usage="stdlib" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.real_prefix}\Lib\typing.py">
+  <module name="typing" kind="UncompiledPythonModule" usage="import" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.real_prefix}\Lib\typing.py">
     <optimization-time pass="1" time="3.69" micro_passes="7" max_branch_merge="148" merged_total="36555" />
     <optimization-time pass="2" time="0.00" />
     <module_usages>
@@ -4284,9 +4300,9 @@
     </module_usages>
   </module>
   <performance>
-    <memory_usage name="after_launch" value="38711296" />
-    <memory_usage name="before_c_code_generation" value="66949120" />
-    <memory_usage name="before_running_scons" value="67616768" />
+    <memory_usage name="after_launch" value="38625280" />
+    <memory_usage name="before_c_code_generation" value="67194880" />
+    <memory_usage name="before_running_scons" value="68673536" />
   </performance>
   <data_file name="tk\bgerror.tcl" source="${sys.real_prefix}\tcl\tk8.6\bgerror.tcl" size="8806" reason="Tk needed for tkinter usage" tags="tk,copy,data-dir-contents" />
   <data_file name="tk\button.tcl" source="${sys.real_prefix}\tcl\tk8.6\button.tcl" size="21612" reason="Tk needed for tkinter usage" tags="tk,copy,data-dir-contents" />
@@ -5219,10 +5235,10 @@
   <included_extension name="_wmi.pyd" dest_path="_wmi.pyd" source_path="${sys.real_prefix}\DLLs\_wmi.pyd" package="" ignored="no" reason="used extension module" />
   <included_extension name="select.pyd" dest_path="select.pyd" source_path="${sys.real_prefix}\DLLs\select.pyd" package="" ignored="no" reason="used extension module" />
   <included_extension name="unicodedata.pyd" dest_path="unicodedata.pyd" source_path="${sys.real_prefix}\DLLs\unicodedata.pyd" package="" ignored="no" reason="used extension module" />
-  <data_composer blob_size="6245501" total="604">
-    <module_data filename="__bytecode.const" blob_name=".bytecode" blob_size="6241794" input_size="6265796" />
+  <data_composer blob_size="6321969" total="884">
+    <module_data filename="__bytecode.const" blob_name=".bytecode" blob_size="6313382" input_size="6337459" />
     <module_data filename="__constants.const" blob_name="" blob_size="878" input_size="2245" />
-    <module_data filename="module.__main__.const" blob_name="__main__" blob_size="2582" input_size="4142" />
+    <module_data filename="module.__main__.const" blob_name="__main__" blob_size="7462" input_size="12198" />
     <module_data filename="module.tkinter-preLoad.const" blob_name="tkinter-preLoad" blob_size="187" input_size="406" />
   </data_composer>
   <command_line>
@@ -5230,11 +5246,12 @@
     <option value="--onefile" />
     <option value="--enable-plugin=tk-inter" />
     <option value="--assume-yes-for-downloads" />
-    <option value="--output-dir=test_dist" />
-    <option value="--output-filename=ChessGame-Test.exe" />
-    <option value="main.py" />
-    <option value="--msvc=latest" />
+    <option value="--output-dir=dist" />
+    <option value="--windows-icon-from-ico=assets/icon.ico" />
+    <option value="--mingw64" />
     <option value="--windows-console-mode=disable" />
+    <option value="--output-filename=ChessGame-Multiplayer-windows" />
+    <option value="chess_multiplayer.py" />
   </command_line>
   <plugins>
     <plugin name="anti-bloat" user_enabled="no" />
@@ -5270,5 +5287,5 @@
       <path value="${sys.prefix}\Lib\site-packages" />
     </search_path>
   </python>
-  <output run_filename="${cwd}\test_dist\ChessGame-Test.exe" />
+  <output run_filename="${cwd}\dist\ChessGame-Multiplayer-windows.exe" />
 </nuitka-compilation-report>
