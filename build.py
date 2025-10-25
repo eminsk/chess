@@ -2,7 +2,8 @@
 """
 Build script for Professional Chess Game
 
-Creates standalone executables for the chess game using PyInstaller.
+Creates standalone executables for the chess game using Nuitka.
+Nuitka compiles Python to C++ for better performance and smaller executables.
 """
 
 import os
@@ -19,22 +20,95 @@ def run_command(cmd, description):
     try:
         result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
         print(f"✅ {description} completed successfully")
+        if result.stdout:
+            print(f"Output: {result.stdout.strip()}")
         return True
     except subprocess.CalledProcessError as e:
         print(f"❌ {description} failed:")
         print(f"Error: {e.stderr}")
+        if e.stdout:
+            print(f"Output: {e.stdout}")
         return False
 
 
-def install_pyinstaller():
-    """Install PyInstaller if not available"""
+def install_nuitka():
+    """Install Nuitka and required dependencies"""
     try:
-        import PyInstaller
-        print("✅ PyInstaller is already installed")
+        import nuitka
+        print("✅ Nuitka is already installed")
         return True
     except ImportError:
-        print("📦 Installing PyInstaller...")
-        return run_command(f"{sys.executable} -m pip install pyinstaller", "PyInstaller installation")
+        print("📦 Installing Nuitka...")
+        
+        # Check if uv is available
+        try:
+            subprocess.run("uv --version", shell=True, check=True, capture_output=True)
+            print("🚀 Using uv for package installation")
+            return run_command("uv add nuitka ordered-set", "Installing Nuitka with uv")
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            # Fallback to pip
+            print("📦 Using pip for package installation")
+            packages = ["nuitka", "ordered-set"]
+            for package in packages:
+                if not run_command(f"{sys.executable} -m pip install {package}", f"Installing {package}"):
+                    return False
+            return True
+
+
+def install_compiler():
+    """Check and install C++ compiler if needed"""
+    system = platform.system()
+    
+    if system == "Windows":
+        print("🔧 Checking for C++ compiler on Windows...")
+        # Try to find Visual Studio Build Tools or MinGW
+        try:
+            result = subprocess.run("where cl", shell=True, capture_output=True, text=True)
+            if result.returncode == 0:
+                print("✅ Visual Studio C++ compiler found")
+                return True
+        except:
+            pass
+        
+        try:
+            result = subprocess.run("where gcc", shell=True, capture_output=True, text=True)
+            if result.returncode == 0:
+                print("✅ MinGW GCC compiler found")
+                return True
+        except:
+            pass
+        
+        print("⚠️ No C++ compiler found. Nuitka will try to download MinGW automatically.")
+        print("   If build fails, install Visual Studio Build Tools or MinGW manually.")
+        return True
+        
+    elif system == "Linux":
+        print("🔧 Checking for C++ compiler on Linux...")
+        try:
+            result = subprocess.run("which gcc", shell=True, capture_output=True, text=True)
+            if result.returncode == 0:
+                print("✅ GCC compiler found")
+                return True
+            else:
+                print("❌ GCC not found. Please install: sudo apt-get install gcc g++ (Ubuntu/Debian)")
+                return False
+        except:
+            return False
+            
+    elif system == "Darwin":  # macOS
+        print("🔧 Checking for C++ compiler on macOS...")
+        try:
+            result = subprocess.run("which clang", shell=True, capture_output=True, text=True)
+            if result.returncode == 0:
+                print("✅ Clang compiler found")
+                return True
+            else:
+                print("❌ Clang not found. Please install Xcode Command Line Tools: xcode-select --install")
+                return False
+        except:
+            return False
+    
+    return True
 
 
 def clean_build_dirs():
@@ -55,21 +129,32 @@ def get_platform_name():
 
 
 def build_executables():
-    """Build all executables"""
+    """Build all executables using Nuitka"""
     platform_name = get_platform_name()
     
-    # Common PyInstaller options
+    # Create dist directory if it doesn't exist
+    os.makedirs("dist", exist_ok=True)
+    
+    # Common Nuitka options
     common_opts = [
+        "--standalone",
         "--onefile",
-        "--windowed",
-        "--clean",
-        "--noconfirm"
+        "--enable-plugin=tk-inter",
+        "--assume-yes-for-downloads",
+        "--output-dir=dist"
     ]
     
     # Add icon if available (Windows)
     icon_path = "assets/icon.ico"
     if os.path.exists(icon_path) and platform.system() == "Windows":
-        common_opts.append(f"--icon={icon_path}")
+        common_opts.append(f"--windows-icon-from-ico={icon_path}")
+    
+    # Platform-specific optimizations
+    if platform.system() == "Windows":
+        common_opts.extend([
+            "--mingw64",  # Use MinGW64 compiler (auto-download)
+            "--windows-console-mode=disable"
+        ])
     
     builds = [
         {
@@ -92,17 +177,32 @@ def build_executables():
     success_count = 0
     
     for build in builds:
+        # Build with Nuitka
         cmd_parts = [
-            "pyinstaller",
+            f"{sys.executable} -m nuitka",
             *common_opts,
-            f"--name={build['name']}",
+            f"--output-filename={build['name']}",
             build['script']
         ]
         
         cmd = " ".join(cmd_parts)
         
-        if run_command(cmd, f"Building {build['description']}"):
+        if run_command(cmd, f"Building {build['description']} with Nuitka"):
             success_count += 1
+            
+            # Move the executable to dist folder with correct name
+            source_name = build['script'].replace('.py', '.exe' if platform.system() == "Windows" else '')
+            target_name = f"{build['name']}.exe" if platform.system() == "Windows" else build['name']
+            
+            # Find the generated executable
+            for root, dirs, files in os.walk("dist"):
+                for file in files:
+                    if file.startswith(build['script'].replace('.py', '')):
+                        source_path = os.path.join(root, file)
+                        target_path = os.path.join("dist", target_name)
+                        if source_path != target_path:
+                            shutil.move(source_path, target_path)
+                        break
         else:
             print(f"❌ Failed to build {build['description']}")
     
@@ -191,8 +291,8 @@ def create_archive(package_name):
 
 def main():
     """Main build process"""
-    print("🎯 Professional Chess Game - Build Script")
-    print("=" * 50)
+    print("🎯 Professional Chess Game - Build Script (Nuitka)")
+    print("=" * 55)
     
     # Check Python version
     if sys.version_info < (3, 8):
@@ -202,9 +302,14 @@ def main():
     print(f"🐍 Python version: {sys.version}")
     print(f"💻 Platform: {platform.system()} {platform.machine()}")
     
-    # Install dependencies
-    if not install_pyinstaller():
-        print("❌ Failed to install PyInstaller")
+    # Check and install C++ compiler
+    if not install_compiler():
+        print("❌ C++ compiler not available")
+        sys.exit(1)
+    
+    # Install Nuitka
+    if not install_nuitka():
+        print("❌ Failed to install Nuitka")
         sys.exit(1)
     
     # Clean previous builds
@@ -227,6 +332,11 @@ def main():
         print(f"🗜️ Archive: {archive_name}")
     
     print("\n🚀 Ready to distribute!")
+    print("\n💡 Nuitka Benefits:")
+    print("   ✨ Faster startup and execution")
+    print("   📦 Smaller executable size")
+    print("   🔒 Better code protection")
+    print("   🚀 Native C++ compilation")
 
 
 if __name__ == "__main__":

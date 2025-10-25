@@ -38,19 +38,57 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        version: "latest"
+
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install pyinstaller
+        uv sync
+        uv add nuitka ordered-set
 
-    - name: Build executables
+    - name: Install C++ compiler (Windows)
+      if: matrix.platform == 'windows'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Install C++ compiler (Linux)
+      if: matrix.platform == 'linux'
       run: |
-        # Build main launcher
-        pyinstaller --onefile --windowed --name "ChessGame-${{ matrix.platform }}" --icon=assets/icon.ico main.py
-        
-        # Build individual games
-        pyinstaller --onefile --windowed --name "ChessGame-SinglePlayer-${{ matrix.platform }}" --icon=assets/icon.ico chess_game.py
-        pyinstaller --onefile --windowed --name "ChessGame-Multiplayer-${{ matrix.platform }}" --icon=assets/icon.ico chess_multiplayer.py
+        sudo apt-get update
+        sudo apt-get install -y gcc g++ ccache
+
+    - name: Install C++ compiler (macOS)
+      if: matrix.platform == 'macos'
+      run: |
+        xcode-select --install || true
+
+    - name: Build executables with Nuitka (Windows)
+      if: matrix.platform == 'windows'
+      run: |
+        mkdir dist
+        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-dir=dist --output-filename="ChessGame-windows.exe" main.py
+        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-dir=dist --output-filename="ChessGame-SinglePlayer-windows.exe" chess_game.py  
+        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-dir=dist --output-filename="ChessGame-Multiplayer-windows.exe" chess_multiplayer.py
+      shell: cmd
+
+    - name: Build executables with Nuitka (Linux)
+      if: matrix.platform == 'linux'
+      run: |
+        mkdir -p dist
+        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-linux" main.py
+        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-SinglePlayer-linux" chess_game.py
+        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-Multiplayer-linux" chess_multiplayer.py
+      shell: bash
+
+    - name: Build executables with Nuitka (macOS)
+      if: matrix.platform == 'macos'
+      run: |
+        mkdir -p dist
+        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-macos" main.py
+        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-SinglePlayer-macos" chess_game.py
+        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-Multiplayer-macos" chess_multiplayer.py
+      shell: bash
 
     - name: Create portable package (Windows)
       if: matrix.platform == 'windows'

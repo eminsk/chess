@@ -84,19 +84,18 @@ cd chess
 python main.py
 ```
 
-### 🔧 Build Your Own Executables
+### 🔧 For Developers
 
-Want to build executables yourself?
+Want to contribute or modify the code?
 
 ```bash
-# Install PyInstaller
-pip install pyinstaller
-
-# Run the build script
-python build.py
+git clone https://github.com/eminsk/chess.git
+cd chess
+uv sync  # Install dependencies
+python main.py  # Run from source
 ```
 
-This will create platform-specific executables in the `dist/` folder.
+Executables are automatically built by GitHub Actions - no need to build locally!
 
 ### Project Structure
 ```
