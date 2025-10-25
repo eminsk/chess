@@ -88,14 +88,21 @@ professional-chess-game/
 
 ## Running the Game 🚀
 
+### Quick Start (Recommended)
+```bash
+python main.py
+```
+This will open a game mode selector where you can choose between single-player and multiplayer modes.
+
+### Direct Launch
 Choose your preferred game mode:
 
-### Single Player vs AI
+#### Single Player vs AI
 ```bash
 python chess_game.py
 ```
 
-### Two Player Mode
+#### Two Player Mode
 ```bash
 python chess_multiplayer.py
 ```
@@ -103,6 +110,14 @@ python chess_multiplayer.py
 The game window will open centered on your screen with the chess board ready to play.
 
 ## How to Play 🎮
+
+### Game Mode Selection (main.py)
+When you run `python main.py`, you'll see a beautiful selector interface with three options:
+- **🤖 Single Player vs AI**: Challenge the computer opponent
+- **👥 Two Player Mode**: Play with a friend on the same computer  
+- **❌ Exit**: Close the application
+
+### Gameplay
 
 1. **Making Moves**:
    - Click on a piece to select it (it will be highlighted)
