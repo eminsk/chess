@@ -45,8 +45,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv sync
-        uv add nuitka ordered-set
+        python -m pip install --upgrade pip
+        pip install nuitka ordered-set
 
     - name: Install C++ compiler (Windows)
       if: matrix.platform == 'windows'
@@ -67,27 +67,27 @@ jobs:
       if: matrix.platform == 'windows'
       run: |
         mkdir dist
-        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-dir=dist --output-filename="ChessGame-windows.exe" main.py
-        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-dir=dist --output-filename="ChessGame-SinglePlayer-windows.exe" chess_game.py  
-        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-dir=dist --output-filename="ChessGame-Multiplayer-windows.exe" chess_multiplayer.py
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-dir=dist --output-filename="ChessGame-windows.exe" main.py
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-dir=dist --output-filename="ChessGame-SinglePlayer-windows.exe" chess_game.py  
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-dir=dist --output-filename="ChessGame-Multiplayer-windows.exe" chess_multiplayer.py
       shell: cmd
 
     - name: Build executables with Nuitka (Linux)
       if: matrix.platform == 'linux'
       run: |
         mkdir -p dist
-        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-linux" main.py
-        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-SinglePlayer-linux" chess_game.py
-        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-Multiplayer-linux" chess_multiplayer.py
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-linux" main.py
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-SinglePlayer-linux" chess_game.py
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-Multiplayer-linux" chess_multiplayer.py
       shell: bash
 
     - name: Build executables with Nuitka (macOS)
       if: matrix.platform == 'macos'
       run: |
         mkdir -p dist
-        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-macos" main.py
-        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-SinglePlayer-macos" chess_game.py
-        uv run python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-Multiplayer-macos" chess_multiplayer.py
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-macos" main.py
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-SinglePlayer-macos" chess_game.py
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-dir=dist --output-filename="ChessGame-Multiplayer-macos" chess_multiplayer.py
       shell: bash
 
     - name: Create portable package (Windows)
@@ -152,7 +152,7 @@ jobs:
       with:
         name: chess-game-${{ matrix.platform }}
         path: |
-          ChessGame-${{ matrix.platform }}-v*.zip
+          ChessGame-*-v*.zip
 
   release:
     needs: build
