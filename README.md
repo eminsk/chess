@@ -2,6 +2,22 @@
 
 A high-performance, memory-efficient Chess game implementation in Python with a beautiful modern GUI. Built using functional programming paradigms to minimize loops and conditionals while maximizing performance.
 
+## Game Versions 🎮
+
+This project includes two versions of the chess game:
+
+### 1. **chess_game.py** - Single Player vs AI
+- Play against a computer opponent
+- AI automatically plays as Black
+- Simple AI that evaluates captures and makes strategic moves
+- Perfect for practicing your chess skills
+
+### 2. **chess_multiplayer.py** - Two Player Mode  
+- Play with a friend on the same computer
+- Hot-seat multiplayer gameplay
+- Both players take turns using the same interface
+- Ideal for local multiplayer sessions
+
 ## Features ✨
 
 ### Core Gameplay
@@ -44,17 +60,44 @@ A high-performance, memory-efficient Chess game implementation in Python with a 
 ### Prerequisites
 - Python 3.8 or higher
 - tkinter (usually comes with Python)
+- Git (for cloning the repository)
 
 ### Setup
-1. Clone or download the chess game files
+
+#### Option 1: Clone from Git Repository
+```bash
+git clone https://github.com/your-username/professional-chess-game.git
+cd professional-chess-game
+```
+
+#### Option 2: Download Files
+1. Download the chess game files directly
 2. No external dependencies required! Uses only Python standard library
+
+### Project Structure
+```
+professional-chess-game/
+├── chess_game.py          # Single player vs AI
+├── chess_multiplayer.py   # Two player mode
+├── main.py               # Entry point selector
+├── test_chess.py         # Unit tests
+├── README.md             # This documentation
+├── pyproject.toml        # Project configuration
+└── .gitignore           # Git ignore rules
+```
 
 ## Running the Game 🚀
 
-Simply run the main Python file:
+Choose your preferred game mode:
 
+### Single Player vs AI
 ```bash
 python chess_game.py
+```
+
+### Two Player Mode
+```bash
+python chess_multiplayer.py
 ```
 
 The game window will open centered on your screen with the chess board ready to play.

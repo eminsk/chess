@@ -12,35 +12,7 @@ from enum import Enum, auto
 from functools import lru_cache, partial
 from itertools import product
 import copy
-import random
 
-class SimpleAI:
-    def __init__(self, engine):
-        self.engine = engine
-
-    def evaluate_move(self, move):
-        captured = self.engine.board.get(move)
-        if not captured:
-            return 0
-        values = {
-            "PAWN": 1, "KNIGHT": 3, "BISHOP": 3,
-            "ROOK": 5, "QUEEN": 9, "KING": 0
-        }
-        return values[captured.piece_type.name]
-
-    def choose_move(self):
-        moves = [
-            (pos, move)
-            for pos, piece in list(self.engine.board.items())
-            if piece.color == self.engine.current_turn
-            for move in self.engine.get_legal_moves(pos)
-        ]
-        if not moves:
-            return None
-        weighted = [(f, t, self.evaluate_move(t)) for f, t in moves]
-        best_value = max(v for _, _, v in weighted)
-        best_options = [(f, t) for f, t, v in weighted if v == best_value]
-        return random.choice(best_options)
 
 class PieceType(Enum):
     """Chess piece types enumeration"""
@@ -421,7 +393,6 @@ class ChessGUI:
 
         # Initialize game engine
         self.engine = ChessEngine()
-        self.ai = SimpleAI(self.engine)
         self.selected_square: Optional[Position] = None
         self.legal_moves: Set[Position] = set()
 
@@ -429,14 +400,6 @@ class ChessGUI:
         self._create_widgets()
         self._draw_board()
         self._draw_pieces()
-
-    def computer_move(self):
-        if self.engine.current_turn == Color.BLACK:
-            move = self.ai.choose_move()
-            if move:
-                self.engine.make_move(*move)
-                self._refresh_display()
-                self._check_game_status()
 
     def _create_widgets(self):
         """Create all GUI widgets"""
@@ -648,8 +611,6 @@ class ChessGUI:
                 to_pos = clicked_pos
 
                 if self.engine.make_move(from_pos, to_pos):
-                    self._refresh_display()
-                    self.master.after(400, self.computer_move)
                     # Update move history
                     move_text = f"{len(self.engine.move_history)}. {from_pos.to_algebraic()} → {to_pos.to_algebraic()}"
                     self.history_listbox.insert(tk.END, move_text)
@@ -703,7 +664,6 @@ class ChessGUI:
     def _new_game(self):
         """Start a new game"""
         self.engine = ChessEngine()
-        self.ai = SimpleAI(self.engine)
         self.selected_square = None
         self.legal_moves = set()
         self.history_listbox.delete(0, tk.END)
