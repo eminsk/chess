@@ -7,9 +7,16 @@ Choose between single-player (vs AI) or multiplayer (two players) mode.
 
 import tkinter as tk
 from tkinter import messagebox
-import subprocess
 import sys
 import os
+
+# Import the game modules directly
+try:
+    from chess_game import ChessGUI as SinglePlayerGUI
+    from chess_multiplayer import ChessGUI as MultiPlayerGUI
+except ImportError as e:
+    print(f"Error importing game modules: {e}")
+    sys.exit(1)
 
 
 class GameSelector:
@@ -128,37 +135,29 @@ class GameSelector:
     
     def start_single_player(self):
         """Launch single player mode"""
-        self.launch_game("chess_game.py")
+        self.launch_game_direct(SinglePlayerGUI, "Single Player vs AI")
     
     def start_multiplayer(self):
         """Launch multiplayer mode"""
-        self.launch_game("chess_multiplayer.py")
+        self.launch_game_direct(MultiPlayerGUI, "Two Player Mode")
     
-    def launch_game(self, script_name):
-        """Launch the specified game script"""
+    def launch_game_direct(self, game_class, game_name):
+        """Launch the specified game directly"""
         try:
-            # Get the directory where main.py is located
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            script_path = os.path.join(script_dir, script_name)
-            
-            # Check if file exists
-            if not os.path.exists(script_path):
-                messagebox.showerror(
-                    "File Not Found",
-                    f"Could not find {script_name}\nMake sure all game files are in the same directory.\nLooking for: {script_path}"
-                )
-                return
-            
             # Close selector window
             self.root.destroy()
             
+            # Create new root window for the game
+            game_root = tk.Tk()
+            
             # Launch the game
-            subprocess.run([sys.executable, script_path])
+            game_app = game_class(game_root)
+            game_root.mainloop()
             
         except Exception as e:
             messagebox.showerror(
                 "Launch Error",
-                f"Failed to launch {script_name}:\n{str(e)}"
+                f"Failed to launch {game_name}:\n{str(e)}"
             )
     
     def run(self):
