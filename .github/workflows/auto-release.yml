@@ -1,0 +1,74 @@
+name: Auto Release on Main
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.py'
+      - 'pyproject.toml'
+      - 'README.md'
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.version_check.outputs.should_release }}
+      new_version: ${{ steps.version_check.outputs.new_version }}
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Check if version changed
+      id: version_check
+      run: |
+        # Get version from pyproject.toml
+        NEW_VERSION=$(grep -E '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+        echo "Current version: $NEW_VERSION"
+        
+        # Get latest tag
+        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        LATEST_VERSION=${LATEST_TAG#v}
+        echo "Latest tag version: $LATEST_VERSION"
+        
+        # Compare versions
+        if [ "$NEW_VERSION" != "$LATEST_VERSION" ]; then
+          echo "Version changed from $LATEST_VERSION to $NEW_VERSION"
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "new_version=v$NEW_VERSION" >> $GITHUB_OUTPUT
+        else
+          echo "Version unchanged"
+          echo "should_release=false" >> $GITHUB_OUTPUT
+        fi
+
+  auto-release:
+    needs: check-version
+    if: needs.check-version.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create and push tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag ${{ needs.check-version.outputs.new_version }}
+        git push origin ${{ needs.check-version.outputs.new_version }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Trigger release workflow
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: 'release.yml',
+            ref: 'main',
+            inputs: {
+              version: '${{ needs.check-version.outputs.new_version }}'
+            }
+          })

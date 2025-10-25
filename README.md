@@ -57,22 +57,46 @@ This project includes two versions of the chess game:
 
 ## Installation 📦
 
-### Prerequisites
+### 🚀 Quick Install (Recommended)
+
+#### Option 1: Download Pre-built Executables
+**No Python installation required!**
+
+1. Go to [Releases](https://github.com/eminsk/chess/releases)
+2. Download the latest version for your platform:
+   - **Windows**: `ChessGame-Windows-v*.zip`
+   - **Linux**: `ChessGame-Linux-v*.zip`
+   - **macOS**: `ChessGame-macOS-v*.zip`
+3. Extract and run - that's it! 🎉
+
+#### Option 2: Run from Source
+**For developers and Python users**
+
+##### Prerequisites
 - Python 3.8 or higher
 - tkinter (usually comes with Python)
 - Git (for cloning the repository)
 
-### Setup
-
-#### Option 1: Clone from Git Repository
+##### Setup
 ```bash
-git clone https://github.com/your-username/professional-chess-game.git
-cd professional-chess-game
+git clone https://github.com/eminsk/chess.git
+cd chess
+python main.py
 ```
 
-#### Option 2: Download Files
-1. Download the chess game files directly
-2. No external dependencies required! Uses only Python standard library
+### 🔧 Build Your Own Executables
+
+Want to build executables yourself?
+
+```bash
+# Install PyInstaller
+pip install pyinstaller
+
+# Run the build script
+python build.py
+```
+
+This will create platform-specific executables in the `dist/` folder.
 
 ### Project Structure
 ```
@@ -222,13 +246,54 @@ The implementation prioritizes:
 3. **User Experience**: Intuitive interface with visual feedback
 4. **Maintainability**: Modular design for easy enhancement
 
+## Releases & Downloads 📦
+
+### 🎯 Latest Release
+[![GitHub release](https://img.shields.io/github/v/release/eminsk/chess)](https://github.com/eminsk/chess/releases/latest)
+[![GitHub downloads](https://img.shields.io/github/downloads/eminsk/chess/total)](https://github.com/eminsk/chess/releases)
+
+### 🔄 Automatic Releases
+This project features automatic releases:
+- **Auto-versioning**: New releases are created automatically when the version in `pyproject.toml` is updated
+- **Multi-platform builds**: Each release includes executables for Windows, Linux, and macOS
+- **Continuous integration**: GitHub Actions automatically builds and tests the code
+- **Zero-dependency executables**: No need to install Python or any dependencies
+
+### 📋 Release Contents
+Each release includes:
+- **Standalone executables** for all major platforms
+- **Portable packages** - just extract and run
+- **Source code** for developers
+- **Comprehensive documentation**
+
+### 🛠️ Development Builds
+Want to try the latest features? Development builds are created automatically on every commit to the main branch.
+
 ## License 📄
+
+MIT License - see [LICENSE](LICENSE) file for details.
 
 This is a professional implementation created for educational and entertainment purposes.
 
 ## Author ✍️
 
 Developed as a demonstration of professional Python programming with emphasis on functional programming paradigms, performance optimization, and modern GUI design.
+
+## Contributing 🤝
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+### Development Setup
+```bash
+git clone https://github.com/eminsk/chess.git
+cd chess
+python -m pip install -e .
+```
+
+### Running Tests
+```bash
+python -m pytest test_chess.py
+```
 
 ---
 

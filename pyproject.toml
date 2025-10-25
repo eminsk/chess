@@ -1,7 +1,37 @@
 [project]
-name = "chess"
-version = "0.1.0"
-description = "Add your description here"
+name = "professional-chess-game"
+version = "1.0.0"
+description = "A high-performance, memory-efficient Chess game implementation with modern GUI"
 readme = "README.md"
-requires-python = ">=3.13.8"
+authors = [
+    {name = "Chess Game Developer", email = "developer@chessgame.com"}
+]
+license = {text = "MIT"}
+requires-python = ">=3.8"
 dependencies = []
+keywords = ["chess", "game", "gui", "tkinter", "ai", "multiplayer"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Games/Entertainment :: Board Games",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/eminsk/chess"
+Repository = "https://github.com/eminsk/chess.git"
+Issues = "https://github.com/eminsk/chess/issues"
+Documentation = "https://github.com/eminsk/chess#readme"
+
+[project.scripts]
+chess-game = "main:main"
+chess-single = "chess_game:main"
+chess-multi = "chess_multiplayer:main"
