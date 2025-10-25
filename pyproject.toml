@@ -1,6 +1,6 @@
 [project]
 name = "professional-chess-game"
-version = "1.0.3"
+version = "1.0.4"
 description = "A high-performance, memory-efficient Chess game implementation with modern GUI"
 readme = "README.md"
 authors = [
