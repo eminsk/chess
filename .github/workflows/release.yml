@@ -1,9 +1,6 @@
-name: Build and Release
+name: Build and Release (Disabled)
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
       version:
@@ -137,22 +134,32 @@ jobs:
         echo "- ./ChessGame-SinglePlayer-macos (vs AI)" >> ChessGame-macOS-Portable/README-Portable.txt
         echo "- ./ChessGame-Multiplayer-macos (two players)" >> ChessGame-macOS-Portable/README-Portable.txt
 
+    - name: Get version for filename
+      id: get_version
+      run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+
     - name: Create ZIP archive (Windows)
       if: matrix.platform == 'windows'
       run: |
-        powershell Compress-Archive -Path ChessGame-Windows-Portable\* -DestinationPath ChessGame-Windows-v${{ github.ref_name || github.event.inputs.version }}.zip
+        powershell Compress-Archive -Path ChessGame-Windows-Portable\* -DestinationPath ChessGame-Windows-${{ steps.get_version.outputs.version }}.zip
 
     - name: Create ZIP archive (Linux/macOS)
       if: matrix.platform != 'windows'
       run: |
-        zip -r ChessGame-${{ matrix.platform }}-v${{ github.ref_name || github.event.inputs.version }}.zip ChessGame-${{ matrix.platform }}-Portable/
+        zip -r ChessGame-${{ matrix.platform }}-${{ steps.get_version.outputs.version }}.zip ChessGame-${{ matrix.platform }}-Portable/
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: chess-game-${{ matrix.platform }}
         path: |
-          ChessGame-*-v*.zip
+          ChessGame-*-${{ steps.get_version.outputs.version }}.zip
 
   release:
     needs: build

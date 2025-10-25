@@ -1,0 +1,117 @@
+name: Simple Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install nuitka ordered-set
+    
+    - name: Build main game
+      run: |
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --mingw64 --windows-console-mode=disable --output-filename="ChessGame.exe" main.py
+    
+    - name: Create package
+      run: |
+        mkdir ChessGame-Windows
+        copy ChessGame.exe ChessGame-Windows\
+        copy README.md ChessGame-Windows\
+        copy LICENSE ChessGame-Windows\ 2>nul || echo "No LICENSE file"
+        powershell Compress-Archive -Path ChessGame-Windows\* -DestinationPath ChessGame-Windows.zip
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-build
+        path: ChessGame-Windows.zip
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc g++
+        python -m pip install --upgrade pip
+        pip install nuitka ordered-set
+    
+    - name: Build main game
+      run: |
+        python -m nuitka --standalone --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --output-filename="ChessGame" main.py
+    
+    - name: Create package
+      run: |
+        mkdir ChessGame-Linux
+        cp ChessGame ChessGame-Linux/
+        cp README.md ChessGame-Linux/
+        cp LICENSE ChessGame-Linux/ 2>/dev/null || echo "No LICENSE file"
+        chmod +x ChessGame-Linux/ChessGame
+        zip -r ChessGame-Linux.zip ChessGame-Linux/
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-build
+        path: ChessGame-Linux.zip
+
+  release:
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+    
+    - name: List files
+      run: |
+        find . -name "*.zip" -type f
+        ls -la
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Professional Chess Game ${{ github.ref_name }}
+        body: |
+          ## 🎯 Professional Chess Game Release ${{ github.ref_name }}
+          
+          ### 📦 Downloads
+          - **Windows**: ChessGame-Windows.zip
+          - **Linux**: ChessGame-Linux.zip
+          
+          ### 🚀 Quick Start
+          1. Download the appropriate package for your operating system
+          2. Extract the ZIP file
+          3. Run ChessGame executable
+          
+          Enjoy playing chess! ♔♕♖♗♘♙
+        files: |
+          **/*.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
