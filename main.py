@@ -137,11 +137,15 @@ class GameSelector:
     def launch_game(self, script_name):
         """Launch the specified game script"""
         try:
+            # Get the directory where main.py is located
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            script_path = os.path.join(script_dir, script_name)
+            
             # Check if file exists
-            if not os.path.exists(script_name):
+            if not os.path.exists(script_path):
                 messagebox.showerror(
                     "File Not Found",
-                    f"Could not find {script_name}\nMake sure all game files are in the same directory."
+                    f"Could not find {script_name}\nMake sure all game files are in the same directory.\nLooking for: {script_path}"
                 )
                 return
             
@@ -149,7 +153,7 @@ class GameSelector:
             self.root.destroy()
             
             # Launch the game
-            subprocess.run([sys.executable, script_name])
+            subprocess.run([sys.executable, script_path])
             
         except Exception as e:
             messagebox.showerror(

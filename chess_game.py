@@ -356,7 +356,7 @@ class ChessEngine:
             return False
         # Check if any piece has legal moves
         return not any(self.get_legal_moves(pos)
-                      for pos, piece in self.board.items()
+                      for pos, piece in list(self.board.items())
                       if piece.color == self.current_turn)
 
     def is_stalemate(self) -> bool:
@@ -365,7 +365,7 @@ class ChessEngine:
             return False
         # Check if any piece has legal moves
         return not any(self.get_legal_moves(pos)
-                      for pos, piece in self.board.items()
+                      for pos, piece in list(self.board.items())
                       if piece.color == self.current_turn)
 
     def is_draw(self) -> bool:
